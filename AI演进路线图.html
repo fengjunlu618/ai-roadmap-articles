@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="从会说话的工具，到能办事的系统，再到能在现实里学习和行动的伙伴——一条完整的 AI 演进路线图。">
+<title>从会说话的工具，到能办事的系统｜AI 演进路线图</title>
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="%2352D9F0"/><stop offset="1" stop-color="%23A78BFA"/></linearGradient></defs><circle cx="32" cy="32" r="21" fill="none" stroke="url(%23g)" stroke-width="5"/><circle cx="32" cy="32" r="7" fill="url(%23g)"/></svg>'>
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Serif+SC:wght@600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap">
+<style>
+:root{
+  --bg0:#04060C; --bg1:#070B15; --bg2:#0B1120;
+  --ink:#E9EEF7; --ink2:#A7B3C8; --ink3:#66738C;
+  --cyan:#52D9F0; --indigo:#7C8CF8; --violet:#A78BFA;
+  --line:rgba(124,140,248,.15);
+  --grad:linear-gradient(120deg,#52D9F0,#7C8CF8 55%,#A78BFA);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg0);color:var(--ink);
+  font-family:"Noto Sans SC",system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+  font-weight:300;line-height:1.85;-webkit-font-smoothing:antialiased;overflow-x:hidden;color-scheme:dark;
+}
+h1,h2,h3,.serif{font-family:"Noto Serif SC","Songti SC",serif}
+::selection{background:rgba(124,140,248,.35);color:#fff}
+a{color:inherit}
+.wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+
+/* ===== 滚动进度条 ===== */
+.progress{position:fixed;top:0;left:0;right:0;height:2px;z-index:60}
+.progress i{display:block;height:100%;width:0;background:var(--grad);transition:width .1s linear}
+
+/* ===== Hero ===== */
+.hero{position:relative;min-height:100svh;display:flex;align-items:center;justify-content:center;overflow:hidden;
+  background:
+    radial-gradient(1100px 720px at 72% -8%,rgba(124,140,248,.16),transparent 60%),
+    radial-gradient(900px 620px at 8% 112%,rgba(82,217,240,.10),transparent 60%),
+    radial-gradient(700px 500px at 90% 90%,rgba(167,139,250,.08),transparent 60%),
+    var(--bg0);
+}
+#stars{position:absolute;inset:0;width:100%;height:100%;z-index:0}
+.hero-inner{position:relative;z-index:2;max-width:1080px;padding:96px 22px 120px;text-align:center}
+.eyebrow{font-size:12px;letter-spacing:.34em;color:var(--ink3);margin-bottom:28px;animation:fadeUp 1s .15s both}
+.eyebrow b{color:var(--cyan);font-weight:500}
+.hero h1{font-weight:900;font-size:clamp(2.35rem,8.2vw,4.9rem);line-height:1.16;letter-spacing:.01em;margin-bottom:24px;animation:fadeUp 1s .3s both}
+.hero h1 .g{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero-sub{color:var(--ink2);font-size:clamp(15px,2.4vw,17.5px);max-width:640px;margin:0 auto;animation:fadeUp 1s .45s both}
+.route{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;max-width:860px;margin:38px auto 0;animation:fadeUp 1s .6s both}
+.route span{display:inline-flex;align-items:center;gap:9px;font-size:12.5px;color:var(--ink2);border:1px solid var(--line);background:rgba(255,255,255,.02);border-radius:999px;padding:7px 14px}
+.route i{width:6px;height:6px;border-radius:50%;background:var(--ink3);flex:none;animation:dotPulse 2.4s infinite;animation-delay:calc(var(--i)*.22s)}
+.route span.cur i{background:var(--cyan);box-shadow:0 0 10px rgba(82,217,240,.9)}
+.scroll-cue{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);display:inline-flex;align-items:center;gap:9px;color:var(--ink3);font-size:12.5px;letter-spacing:.2em;text-decoration:none;animation:fadeUp 1s .9s both}
+.scroll-cue svg{width:14px;height:14px;animation:bob 2s ease-in-out infinite}
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+@keyframes dotPulse{0%,60%,100%{background:var(--ink3);box-shadow:none}30%{background:var(--cyan);box-shadow:0 0 10px rgba(82,217,240,.8)}}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(5px)}}
+
+/* ===== 章节通用 ===== */
+section{position:relative}
+.sec-head{margin-bottom:56px;max-width:760px}
+.sec-eyebrow{display:inline-flex;align-items:center;gap:12px;font-size:12.5px;letter-spacing:.3em;color:var(--cyan);margin-bottom:18px}
+.sec-eyebrow::before{content:"";width:28px;height:1px;background:var(--grad)}
+.sec-head h2{font-weight:900;font-size:clamp(1.7rem,4.6vw,2.7rem);line-height:1.32;margin-bottom:16px}
+.sec-head p{color:var(--ink2);font-size:15.5px;max-width:640px}
+
+/* ===== 导语 / 三级跳 ===== */
+.intro{padding:120px 0 40px}
+.tri{display:grid;gap:16px;margin-top:44px}
+.tri-card{position:relative;border:1px solid var(--line);border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,.03),transparent),var(--bg1);padding:30px 26px;overflow:hidden}
+.tri-card .n{font-family:"Noto Serif SC";font-weight:900;font-size:1.05rem;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:.1em}
+.tri-card h3{font-size:1.22rem;font-weight:700;margin:10px 0 8px;line-height:1.4}
+.tri-card h3 em{font-style:normal;color:var(--cyan)}
+.tri-card p{color:var(--ink2);font-size:14.5px}
+.intro-note{margin-top:52px;display:grid;gap:14px}
+.intro-note p{color:var(--ink2);font-size:15px;max-width:720px}
+.intro-note b{color:var(--ink);font-weight:500}
+
+/* ===== 主线一 · 时间轴 ===== */
+.mainline{padding:100px 0 70px}
+.tl{position:relative}
+.tl-axis{position:absolute;top:4px;bottom:8px;left:22px;width:2px;background:rgba(124,140,248,.10);transform:translateX(-50%)}
+.tl-axis i{position:absolute;top:0;left:0;width:100%;height:0;background:var(--grad);box-shadow:0 0 12px rgba(124,140,248,.55)}
+.tl-item{position:relative;display:grid;grid-template-columns:44px minmax(0,1fr);gap:0;padding-bottom:58px}
+.tl-item:last-child{padding-bottom:8px}
+.tl-m{grid-column:1;display:flex;justify-content:center}
+.tl-dot{position:relative;z-index:2;width:15px;height:15px;margin-top:5px;border-radius:50%;background:var(--bg1);border:2px solid var(--ink3);transition:all .5s ease}
+.tl-item.on .tl-dot{border-color:var(--cyan);background:var(--cyan);box-shadow:0 0 0 6px rgba(82,217,240,.14),0 0 24px rgba(82,217,240,.75)}
+.tl-r{grid-column:2;padding-left:16px;min-width:0}
+.tl-meta{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.tl-era-m{font-family:"Noto Serif SC";font-weight:900;font-size:.95rem;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.tl-time{color:var(--violet);font-size:12px;letter-spacing:.12em}
+.tl-key{display:inline-block;font-size:11.5px;color:var(--ink3);border:1px solid var(--line);border-radius:999px;padding:3px 11px;margin-bottom:10px;letter-spacing:.06em}
+.tl-title{font-size:clamp(1.18rem,3.2vw,1.55rem);font-weight:700;line-height:1.42;margin-bottom:10px}
+.tl-title em{font-style:normal;color:var(--cyan)}
+.tl-body p{color:var(--ink2);font-size:15px;max-width:60ch}
+.tl-body p + p{margin-top:8px}
+
+/* ===== 关键一跃 ===== */
+.leap{padding:80px 0 96px}
+.leap-card{position:relative;max-width:900px;margin:0 auto;padding:58px 30px;border-radius:22px;text-align:center;overflow:hidden;
+  background:linear-gradient(165deg,rgba(124,140,248,.14),rgba(11,17,32,.94) 52%),var(--bg2);
+  border:1px solid rgba(124,140,248,.25);
+}
+.leap-card::before{content:"";position:absolute;top:-120px;left:50%;transform:translateX(-50%);width:420px;height:420px;border-radius:50%;background:radial-gradient(closest-side,rgba(82,217,240,.20),transparent);pointer-events:none}
+.leap-badge{display:inline-flex;align-items:center;gap:10px;font-size:12px;letter-spacing:.28em;color:var(--cyan);margin-bottom:26px}
+.leap-badge::before,.leap-badge::after{content:"";width:22px;height:1px;background:var(--grad)}
+.leap-pair{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:14px;margin-bottom:22px}
+.leap-chip{font-family:"Noto Serif SC";font-weight:700;font-size:clamp(1.05rem,3vw,1.4rem);border:1px solid var(--line);border-radius:14px;padding:10px 22px;background:rgba(255,255,255,.03)}
+.leap-chip.to{background:var(--grad);border-color:transparent;color:#04060C}
+.leap-arrow{color:var(--ink3);font-size:1.3rem}
+.leap-card h3{font-weight:900;font-size:clamp(1.55rem,4.4vw,2.45rem);line-height:1.4;margin-bottom:6px}
+.leap-card h3 .a{color:var(--ink3);font-weight:700}
+.leap-card h3 .b{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.leap-note{max-width:640px;margin:22px auto 0;color:var(--ink2);font-size:14.5px;border-top:1px solid rgba(124,140,248,.16);padding-top:22px}
+
+/* ===== 主线二 · 阶段 ===== */
+.future{padding:90px 0 60px;background:
+  radial-gradient(900px 500px at 15% 0%,rgba(82,217,240,.05),transparent 60%),
+  radial-gradient(900px 600px at 90% 30%,rgba(167,139,250,.05),transparent 60%);
+}
+.stages{display:grid;gap:18px}
+.stage{position:relative;border:1px solid var(--line);border-radius:20px;background:linear-gradient(180deg,rgba(255,255,255,.03),transparent),var(--bg1);padding:36px 28px 32px;overflow:hidden}
+.stage::after{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--grad);opacity:.85}
+.stage-horizon{font-size:12px;letter-spacing:.24em;color:var(--cyan)}
+.stage-when{color:var(--ink3);font-size:13px;margin:6px 0 4px;letter-spacing:.06em}
+.stage h3{font-size:1.32rem;font-weight:700;line-height:1.4;margin-bottom:12px}
+.stage p{color:var(--ink2);font-size:14.5px}
+.stage p + p{margin-top:10px}
+.tag-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.tag{font-size:12px;color:var(--ink2);border:1px solid var(--line);border-radius:999px;padding:4px 11px;background:rgba(255,255,255,.02)}
+
+/* ===== 五个判断 ===== */
+.insights{padding:96px 0 70px}
+.insight{display:grid;grid-template-columns:56px minmax(0,1fr);gap:16px;padding:30px 0;border-top:1px solid var(--line);transition:background .3s}
+.insight:last-child{border-bottom:1px solid var(--line)}
+.insight:hover{background:rgba(124,140,248,.04)}
+.insight-num{font-family:"Noto Serif SC";font-weight:900;font-size:1.55rem;line-height:1.2;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.insight h3{font-size:1.18rem;font-weight:700;margin-bottom:8px;line-height:1.45}
+.insight h3 em{font-style:normal;color:var(--cyan)}
+.insight p{color:var(--ink2);font-size:14.5px;max-width:68ch}
+
+/* ===== 结尾 ===== */
+.ending{padding:110px 0 130px;text-align:center;position:relative;overflow:hidden}
+.ending::before{content:"";position:absolute;top:40px;left:50%;transform:translateX(-50%);width:560px;height:560px;border-radius:50%;background:radial-gradient(closest-side,rgba(124,140,248,.10),transparent);pointer-events:none}
+.end-label{font-size:12.5px;letter-spacing:.3em;color:var(--ink3);margin-bottom:14px}
+.end-route{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:920px;margin:34px auto 52px}
+.end-route span{font-size:13px;color:var(--ink2);border:1px solid var(--line);border-radius:999px;padding:8px 16px;background:rgba(255,255,255,.02)}
+.end-route i{color:var(--cyan);font-style:normal;font-size:12px;margin:0 2px}
+.final-quote{position:relative;max-width:880px;margin:0 auto;font-family:"Noto Serif SC";font-weight:700;font-size:clamp(1.28rem,3.5vw,1.85rem);line-height:1.75}
+.final-quote b{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.close-line{color:var(--ink3);font-size:14.5px;margin-top:44px}
+.close-line em{font-style:normal;color:var(--ink2)}
+
+footer{border-top:1px solid rgba(124,140,248,.10);padding:34px 22px 44px;text-align:center;color:var(--ink3);font-size:12.5px;letter-spacing:.1em}
+
+/* ===== 滚动揭示 ===== */
+.rv{opacity:0;transform:translateY(26px);transition:opacity .8s ease,transform .8s ease}
+.rv.on{opacity:1;transform:none}
+body.no-motion .rv{opacity:1;transform:none;transition:none}
+
+/* ===== 桌面 ===== */
+@media(min-width:768px){
+  .intro{padding:140px 0 60px}
+  .tri{grid-template-columns:repeat(3,1fr);gap:18px}
+  .tl-item{grid-template-columns:minmax(0,1fr) 96px minmax(0,1fr);padding-bottom:72px}
+  .tl-axis{left:50%}
+  .tl-l{grid-column:1;text-align:right;padding-right:36px;padding-top:2px}
+  .tl-era{font-family:"Noto Serif SC";font-weight:900;font-size:1.7rem;line-height:1;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;display:block;margin-bottom:8px}
+  .tl-time{display:block}
+  .tl-m{grid-column:2}
+  .tl-r{grid-column:3;padding-left:36px;min-width:0}
+  .tl-meta{display:none}
+  .tl-body p{font-size:15.5px}
+  .leap{padding:100px 0 120px}
+  .future{padding:120px 0 80px}
+  .stages{grid-template-columns:repeat(3,1fr);gap:20px}
+  .insight{grid-template-columns:84px minmax(0,1fr);gap:22px;padding:34px 12px}
+  .insight-num{font-size:1.9rem}
+  .ending{padding:140px 0 150px}
+}
+</style>
+</head>
+<body>
+
+<div class="progress" aria-hidden="true"><i id="prBar"></i></div>
+
+<!-- ===== Hero ===== -->
+<header class="hero" id="top">
+  <canvas id="stars" aria-hidden="true"></canvas>
+  <div class="hero-inner">
+    <p class="eyebrow">THE EVOLUTION OF AI · <b>智能演进观察</b></p>
+    <h1>从会说话的工具，<br>到<span class="g">能办事的系统</span></h1>
+    <p class="hero-sub">AI 演进的完整路线图 —— 一条从对话、协作，到自主行动与自我进化的能力阶梯。</p>
+    <div class="route" aria-hidden="true">
+      <span style="--i:0"><i></i>规则与搜索</span>
+      <span style="--i:1"><i></i>Chatbot</span>
+      <span style="--i:2"><i></i>Copilot</span>
+      <span style="--i:3"><i></i>Agent</span>
+      <span style="--i:4"><i></i>Personal Agent</span>
+      <span style="--i:5"><i></i>Agent OS</span>
+      <span style="--i:6"><i></i>具身智能</span>
+      <span style="--i:7"><i></i>Self-Improving AI</span>
+    </div>
+  </div>
+  <a class="scroll-cue" href="#intro">向下滚动，展开这张路线图
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+  </a>
+</header>
+
+<main>
+
+  <!-- ===== 01 摘要 ===== -->
+  <section class="intro" id="intro">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <p class="sec-eyebrow">01 / 摘要</p>
+        <h2>AI 正在经历一场「三级跳」</h2>
+        <p>真正的分水岭，不是模型更会聊天，而是它能不能替你把事情办完。沿这条线索，AI 的演进可以被清晰地拆成两个层次。</p>
+      </div>
+      <div class="tri">
+        <div class="tri-card rv">
+          <div class="n">STEP 01</div>
+          <h3>会说话的<em>工具</em></h3>
+          <p>对话范式：你问它答，AI 随叫随到，但任务的控制权始终在你手里。</p>
+        </div>
+        <div class="tri-card rv">
+          <div class="n">STEP 02</div>
+          <h3>能办事的<em>系统</em></h3>
+          <p>智能体范式：给定目标，AI 拆步骤、调工具、闭环交付，自己处理分支与重试。</p>
+        </div>
+        <div class="tri-card rv">
+          <div class="n">STEP 03</div>
+          <h3>在现实里学习、<em>行动的伙伴</em></h3>
+          <p>具身与自我进化范式：理解物理世界，动手行动，甚至改进下一代模型。</p>
+        </div>
+      </div>
+      <div class="intro-note">
+        <p class="rv">近十年，主线是<b>交互范式的演进</b>——AI 离「人」越来越近，从被调用走向被托付。</p>
+        <p class="rv">未来，主线是<b>系统形态的演进</b>——AI 离「世界」越来越近，从屏幕里的脑子走进现实。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 02 主线一 · 交互范式 ===== -->
+  <section class="mainline" id="line1">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <p class="sec-eyebrow">02 / 主线一 · 交互范式</p>
+        <h2>从「你问它答」到「替你办完」</h2>
+        <p>这是过去十年大家体感最强的一条线。每一步，AI 都离「人」更近了一点：从被调用，到被托付。</p>
+      </div>
+
+      <div class="tl">
+        <div class="tl-axis" aria-hidden="true"><i id="tlFill"></i></div>
+
+        <div class="tl-item">
+          <div class="tl-l">
+            <span class="tl-era">01</span>
+            <span class="tl-time">1990s — 2010s</span>
+          </div>
+          <div class="tl-m"><span class="tl-dot"></span></div>
+          <div class="tl-r">
+            <div class="tl-meta"><span class="tl-era-m">01</span><span class="tl-time">1990s — 2010s</span></div>
+            <span class="tl-key">按固定流程办事</span>
+            <h3 class="tl-title">规则与搜索时代</h3>
+            <div class="tl-body">
+              <p>早期 AI 靠人工写规则，或从数据里找规律。代表有专家系统、搜索引擎、推荐算法。</p>
+              <p>特点是「按固定流程办事」——人在规则内寻找答案，AI 不越界。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-l">
+            <span class="tl-era">02</span>
+            <span class="tl-time">2022 —</span>
+          </div>
+          <div class="tl-m"><span class="tl-dot"></span></div>
+          <div class="tl-r">
+            <div class="tl-meta"><span class="tl-era-m">02</span><span class="tl-time">2022 —</span></div>
+            <span class="tl-key">你问它答</span>
+            <h3 class="tl-title">Chatbot 时代</h3>
+            <div class="tl-body">
+              <p>ChatGPT 让大众体验到：用自然语言就能让 AI 写作、翻译、解答。使用门槛大幅降低。</p>
+              <p>但本质仍是「你问它答」——AI 是一面更聪明的镜子，响应你的每一次提问。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-l">
+            <span class="tl-era">03</span>
+            <span class="tl-time">2021 — 2023</span>
+          </div>
+          <div class="tl-m"><span class="tl-dot"></span></div>
+          <div class="tl-r">
+            <div class="tl-meta"><span class="tl-era-m">03</span><span class="tl-time">2021 — 2023</span></div>
+            <span class="tl-key">伴生辅助</span>
+            <h3 class="tl-title">Copilot</h3>
+            <div class="tl-body">
+              <p>AI 进入你正在做的事里，补下一行代码、给一个建议。控制权始终在人手里。</p>
+              <p>它是你的搭档，不是你的代理人——你掌舵，它出力。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-l">
+            <span class="tl-era">04</span>
+            <span class="tl-time">2023 —</span>
+          </div>
+          <div class="tl-m"><span class="tl-dot"></span></div>
+          <div class="tl-r">
+            <div class="tl-meta"><span class="tl-era-m">04</span><span class="tl-time">2023 —</span></div>
+            <span class="tl-key">目标驱动</span>
+            <h3 class="tl-title">Agent</h3>
+            <div class="tl-body">
+              <p>大模型有了规划、记忆与工具调用能力。你给一个目标，它能拆步骤、查资料、改文件、调软件，再根据结果自我调整。</p>
+              <p>编程领域常把这条线细分：<b>Copilot</b> 帮你补下一行代码；<b>Coding Agent</b> 理解整个项目，完成修改、测试与修复；<b>Multi-Agent</b> 让多个 Agent 分工协作，像一个小团队。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-l">
+            <span class="tl-era">05</span>
+            <span class="tl-time">现在 —</span>
+          </div>
+          <div class="tl-m"><span class="tl-dot"></span></div>
+          <div class="tl-r">
+            <div class="tl-meta"><span class="tl-era-m">05</span><span class="tl-time">现在 —</span></div>
+            <span class="tl-key">绑定一个人</span>
+            <h3 class="tl-title">Personal Agent</h3>
+            <div class="tl-body">
+              <p>Agent 进一步围绕「一个人」长期运行：记住偏好、目标与权限，跨应用持续推进任务，还能在后台持续工作。</p>
+              <p>Claude Duet、OpenAI Dots、Meta Muse 都属于这一方向。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 03 关键一跃 ===== -->
+  <section class="leap" id="leap">
+    <div class="wrap">
+      <div class="leap-card rv">
+        <div class="leap-badge">关键一跃</div>
+        <div class="leap-pair">
+          <span class="leap-chip">Copilot</span>
+          <span class="leap-arrow">→</span>
+          <span class="leap-chip to">Agent</span>
+        </div>
+        <h3>从「<span class="a">给你建议</span>」<br>到「<span class="b">替你把事情办完</span>」</h3>
+        <p class="leap-note">整条路线里最关键的一跃，不是模型参数变大，而是责任转移：AI 从输出内容，变成交付结果。<br>顺带一提：Vibe Coding 与 Vibe Work 常被并列为「独立时代」，但它们更准确的定位是 <b>Agent 的应用场景</b>——以模糊意图、快速迭代、人机共创为特征的工作流，而不是与 Chatbot、Agent 同级的范式层级。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 04 主线二 · 系统形态 ===== -->
+  <section class="future" id="line2">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <p class="sec-eyebrow">04 / 主线二 · 系统形态</p>
+        <h2>往后的三步：基建、世界、自我进化</h2>
+        <p>Personal Agent 只是入口。再往后，AI 会从「替你办事」，走向「长期懂你、跨应用办事、从结果里学习，最后进入现实世界」。</p>
+      </div>
+      <div class="stages">
+        <article class="stage rv">
+          <div class="stage-horizon">近期 · HORIZON 1</div>
+          <div class="stage-when">未来 1 — 3 年</div>
+          <h3>Agent OS：给智能体一个操作系统</h3>
+          <p>以后你不再一个个打开软件，而是给 AI 一个目标，由它调度邮件、日历、文档、财务、客服与代码。</p>
+          <p>关键不是模型更会聊天，而是这几样基建成熟。行业把它叫「驾驭工程」——给聪明的模型套上挽具，让它稳定干活。</p>
+          <div class="tag-row">
+            <span class="tag">长期记忆</span><span class="tag">工具调用</span><span class="tag">错误恢复</span><span class="tag">多 Agent 协作</span><span class="tag">权限控制</span>
+          </div>
+        </article>
+
+        <article class="stage rv">
+          <div class="stage-horizon">中期 · HORIZON 2</div>
+          <div class="stage-when">未来 3 — 7 年</div>
+          <h3>世界模型 + 具身智能：走进物理世界</h3>
+          <p>现在的 AI 还太像「屏幕里的脑子」。世界模型不只预测下一个词，而是预测「我这么做之后，世界会发生什么」。</p>
+          <p>再配上机器人、自动驾驶、自动化实验室，AI 就从数字员工变成能动手的主体——这就是 Physical AI / 具身智能。</p>
+          <div class="tag-row">
+            <span class="tag">世界模型</span><span class="tag">机器人</span><span class="tag">自动驾驶</span><span class="tag">自动化实验室</span>
+          </div>
+        </article>
+
+        <article class="stage rv">
+          <div class="stage-horizon">远期 · HORIZON 3</div>
+          <div class="stage-when">5 年以上</div>
+          <h3>Self-Improving AI：自我进化的研究机器</h3>
+          <p>最猛的一步：AI 自己发现问题、设计实验、分析结果、改进下一代模型。</p>
+          <p>苗头已经出现——AI 写代码、调训练流程越来越常见。有预测认为，AI 可靠完成任务的时间约每 4 个月翻一倍，2026 年达到 16 小时级；但连续数周自主研究仍有距离。</p>
+          <div class="tag-row">
+            <span class="tag">自动科研闭环</span><span class="tag">模型迭代</span><span class="tag">长期自主</span>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 05 五个判断 ===== -->
+  <section class="insights" id="insights">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <p class="sec-eyebrow">05 / 五个判断</p>
+        <h2>把这条路线读清楚的五个关键</h2>
+      </div>
+
+      <div class="insight rv">
+        <div class="insight-num">一</div>
+        <div>
+          <h3>Vibe Coding 是<em>应用场景</em>，不是独立时代</h3>
+          <p>它以模糊意图、快速迭代、人机共创为特征，本质是 Agent 的工作流。同一套 Agent 能力，既能做严谨的工单自动化，也能做 vibe 式自由创作。</p>
+        </div>
+      </div>
+      <div class="insight rv">
+        <div class="insight-num">二</div>
+        <div>
+          <h3>Agent OS 是<em>基建</em>，不是模型</h3>
+          <p>模型是引擎，Agent OS 是调度、权限、状态持久化与故障回滚的底盘。聪明的引擎，也需要一套可靠的底盘。</p>
+        </div>
+      </div>
+      <div class="insight rv">
+        <div class="insight-num">三</div>
+        <div>
+          <h3>演进是<em>叠加</em>，不是替代</h3>
+          <p>今天的 Agent 内部依然嵌套规则、校验与搜索，只是上层多了一层规划与自主决策。旧能力没有消失，而是被收编。</p>
+        </div>
+      </div>
+      <div class="insight rv">
+        <div class="insight-num">四</div>
+        <div>
+          <h3>Self-Improving AI <em>不等于</em> AGI</h3>
+          <p>自主改进可以是领域受限的：能自动优化代码与实验，不等于跨一切领域、拥有主观意识。别把「会自我进化」直接等同于「通用智能」。</p>
+        </div>
+      </div>
+      <div class="insight rv">
+        <div class="insight-num">五</div>
+        <div>
+          <h3>AGI 会<em>渐进落地</em>，而非突变觉醒</h3>
+          <p>它先在编程、科研、企业流程和机器人里一点点渗透，而不是某天突然「觉醒」。真正的分水岭，藏在每个可验证的交付里。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 06 结尾 ===== -->
+  <section class="ending" id="end">
+    <div class="wrap">
+      <div class="end-label">COMPLETE ROUTE · 完整路线</div>
+      <div class="end-route">
+        <span>Chatbot</span><i>→</i>
+        <span>Copilot</span><i>→</i>
+        <span>Personal Agent</span><i>→</i>
+        <span>Agent OS</span><i>→</i>
+        <span>World Model / 具身智能</span><i>→</i>
+        <span>Self-Improving AI</span>
+      </div>
+      <p class="final-quote rv">真正的通用人工智能（AGI）何时到来，目前仍无定论。<br>更靠谱的判断是：它会先在编程、科研、企业流程和机器人里<b>一点点落地</b>，<br>而不是某天突然「觉醒」。</p>
+      <p class="close-line">时代的下一步，不是模型更聪明，而是<em>系统更可靠</em>。</p>
+    </div>
+  </section>
+
+</main>
+
+<footer>AI 演进路线图 · 趋势观察文章 · 内容基于公开讨论整理 · 2026</footer>
+
+<script>
+(function(){
+  var prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (prefersReduced) document.body.classList.add('no-motion');
+
+  /* ---------- 星图 Canvas ---------- */
+  var cv = document.getElementById('stars');
+  var ctx = cv.getContext('2d');
+  var W=0,H=0,pts=[],rafId=null,heroVisible=true;
+
+  function resize(){
+    W = cv.width = cv.offsetWidth;
+    H = cv.height = cv.offsetHeight;
+    var n = Math.max(40, Math.min(130, Math.floor(W*H/15000)));
+    pts = [];
+    for(var i=0;i<n;i++){
+      pts.push({
+        x: Math.random()*W, y: Math.random()*H,
+        vx: (Math.random()-.5)*.22, vy: (Math.random()-.5)*.22,
+        r: Math.random()*1.5+.4
+      });
+    }
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    var i,j;
+    for(i=0;i<pts.length;i++){
+      var p=pts[i];
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.x<0) p.x=W; if(p.x>W) p.x=0;
+      if(p.y<0) p.y=H; if(p.y>H) p.y=0;
+    }
+    for(i=0;i<pts.length;i++){
+      for(j=i+1;j<pts.length;j++){
+        var dx=pts[i].x-pts[j].x, dy=pts[i].y-pts[j].y;
+        var d=Math.sqrt(dx*dx+dy*dy);
+        if(d<120){
+          ctx.strokeStyle='rgba(124,140,248,'+((1-d/120)*.20).toFixed(3)+')';
+          ctx.lineWidth=1;
+          ctx.beginPath(); ctx.moveTo(pts[i].x,pts[i].y); ctx.lineTo(pts[j].x,pts[j].y); ctx.stroke();
+        }
+      }
+    }
+    for(i=0;i<pts.length;i++){
+      var p=pts[i];
+      ctx.fillStyle='rgba(233,238,247,'+(0.25+p.r*0.22).toFixed(3)+')';
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,6.2832); ctx.fill();
+    }
+  }
+
+  function loop(){
+    draw();
+    rafId = requestAnimationFrame(loop);
+  }
+
+  resize();
+  if(prefersReduced){ draw(); } else { loop(); }
+
+  window.addEventListener('resize', function(){
+    resize();
+    if(prefersReduced) draw();
+  });
+
+  if('IntersectionObserver' in window){
+    var heroObs = new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        heroVisible = e.isIntersecting;
+        if(prefersReduced) return;
+        if(heroVisible && !rafId){ loop(); }
+        if(!heroVisible && rafId){ cancelAnimationFrame(rafId); rafId=null; }
+      });
+    }, {threshold: 0.02});
+    heroObs.observe(document.querySelector('.hero'));
+  }
+
+  /* ---------- 滚动：进度条 + 时间轴填充 ---------- */
+  var prBar = document.getElementById('prBar');
+  var tlFill = document.getElementById('tlFill');
+  var tlSec = document.getElementById('line1');
+  var ticking = false;
+
+  function onScroll(){
+    ticking = false;
+    var doc = document.documentElement;
+    var max = doc.scrollHeight - window.innerHeight;
+    var p = max>0 ? (window.scrollY/max) : 0;
+    prBar.style.width = (p*100).toFixed(2)+'%';
+
+    var r = tlSec.getBoundingClientRect();
+    var total = r.height - window.innerHeight*0.25;
+    var cur = Math.min(Math.max(-r.top + window.innerHeight*0.12, 0), total);
+    tlFill.style.height = (total>0 ? (cur/total*100).toFixed(2) : 0)+'%';
+  }
+
+  function requestTick(){
+    if(!ticking){ ticking=true; requestAnimationFrame(onScroll); }
+  }
+
+  window.addEventListener('scroll', requestTick, {passive:true});
+  window.addEventListener('resize', requestTick);
+  onScroll();
+
+  /* ---------- 滚动揭示 ---------- */
+  var rvs = document.querySelectorAll('.rv');
+  if('IntersectionObserver' in window && !prefersReduced){
+    var io = new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if(e.isIntersecting){ e.target.classList.add('on'); io.unobserve(e.target); }
+      });
+    }, {threshold: 0.12, rootMargin:'0px 0px -6% 0px'});
+    rvs.forEach(function(el){ io.observe(el); });
+  } else {
+    rvs.forEach(function(el){ el.classList.add('on'); });
+  }
+
+  /* ---------- 时间轴节点点亮 ---------- */
+  var items = document.querySelectorAll('.tl-item');
+  if('IntersectionObserver' in window){
+    var io2 = new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if(e.isIntersecting){ e.target.classList.add('on'); }
+        else { e.target.classList.remove('on'); }
+      });
+    }, {threshold: 0.45});
+    items.forEach(function(el){ io2.observe(el); });
+  } else {
+    items.forEach(function(el){ el.classList.add('on'); });
+  }
+})();
+</script>
+</body>
+</html>

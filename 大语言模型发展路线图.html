@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="大语言模型（LLM）发展路线图：从词向量到推理模型，架构、规模、对齐三条主线交织的十年技术跃迁。">
+<title>从词的向量，到会推理的模型｜LLM 发展路线图</title>
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="%2352D9F0"/><stop offset="1" stop-color="%23A78BFA"/></linearGradient></defs><circle cx="32" cy="32" r="21" fill="none" stroke="url(%23g)" stroke-width="5"/><circle cx="32" cy="32" r="7" fill="url(%23g)"/></svg>'>
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Serif+SC:wght@600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap">
+<style>
+:root{
+  --bg0:#04060C; --bg1:#070B15; --bg2:#0B1120;
+  --ink:#E9EEF7; --ink2:#A7B3C8; --ink3:#66738C;
+  --cyan:#52D9F0; --indigo:#7C8CF8; --violet:#A78BFA;
+  --line:rgba(124,140,248,.15);
+  --grad:linear-gradient(120deg,#52D9F0,#7C8CF8 55%,#A78BFA);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg0);color:var(--ink);
+  font-family:"Noto Sans SC",system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+  font-weight:300;line-height:1.85;-webkit-font-smoothing:antialiased;overflow-x:hidden;color-scheme:dark;
+}
+h1,h2,h3,.serif{font-family:"Noto Serif SC","Songti SC",serif}
+::selection{background:rgba(124,140,248,.35);color:#fff}
+a{color:inherit}
+.wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+
+/* 进度条 */
+.progress{position:fixed;top:0;left:0;right:0;height:2px;z-index:60}
+.progress i{display:block;height:100%;width:0;background:var(--grad);transition:width .1s linear}
+
+/* Hero */
+.hero{position:relative;min-height:100svh;display:flex;align-items:center;justify-content:center;overflow:hidden;
+  background:
+    radial-gradient(1100px 720px at 72% -8%,rgba(124,140,248,.16),transparent 60%),
+    radial-gradient(900px 620px at 8% 112%,rgba(82,217,240,.10),transparent 60%),
+    radial-gradient(700px 500px at 90% 90%,rgba(167,139,250,.08),transparent 60%),
+    var(--bg0);
+}
+#stars{position:absolute;inset:0;width:100%;height:100%;z-index:0}
+.hero-inner{position:relative;z-index:2;max-width:1080px;padding:96px 22px 120px;text-align:center}
+.eyebrow{font-size:12px;letter-spacing:.34em;color:var(--ink3);margin-bottom:28px;animation:fadeUp 1s .15s both}
+.eyebrow b{color:var(--cyan);font-weight:500}
+.hero h1{font-weight:900;font-size:clamp(2.2rem,7.6vw,4.6rem);line-height:1.16;letter-spacing:.01em;margin-bottom:24px;animation:fadeUp 1s .3s both}
+.hero h1 .g{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero-sub{color:var(--ink2);font-size:clamp(15px,2.4vw,17.5px);max-width:660px;margin:0 auto;animation:fadeUp 1s .45s both}
+.route{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;max-width:880px;margin:38px auto 0;animation:fadeUp 1s .6s both}
+.route span{display:inline-flex;align-items:center;gap:9px;font-size:12.5px;color:var(--ink2);border:1px solid var(--line);background:rgba(255,255,255,.02);border-radius:999px;padding:7px 14px}
+.route i{width:6px;height:6px;border-radius:50%;background:var(--ink3);flex:none;animation:dotPulse 2.4s infinite;animation-delay:calc(var(--i)*.22s)}
+.scroll-cue{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);display:inline-flex;align-items:center;gap:9px;color:var(--ink3);font-size:12.5px;letter-spacing:.2em;text-decoration:none;animation:fadeUp 1s .9s both}
+.scroll-cue svg{width:14px;height:14px;animation:bob 2s ease-in-out infinite}
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+@keyframes dotPulse{0%,60%,100%{background:var(--ink3);box-shadow:none}30%{background:var(--cyan);box-shadow:0 0 10px rgba(82,217,240,.8)}}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(5px)}}
+
+/* 章节通用 */
+section{position:relative}
+.sec-head{margin-bottom:56px;max-width:760px}
+.sec-eyebrow{display:inline-flex;align-items:center;gap:12px;font-size:12.5px;letter-spacing:.3em;color:var(--cyan);margin-bottom:18px}
+.sec-eyebrow::before{content:"";width:28px;height:1px;background:var(--grad)}
+.sec-head h2{font-weight:900;font-size:clamp(1.7rem,4.6vw,2.7rem);line-height:1.32;margin-bottom:16px}
+.sec-head p{color:var(--ink2);font-size:15.5px;max-width:660px}
+
+/* 摘要 / 三条线 */
+.intro{padding:120px 0 40px}
+.tri{display:grid;gap:16px;margin-top:44px}
+.tri-card{position:relative;border:1px solid var(--line);border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,.03),transparent),var(--bg1);padding:30px 26px;overflow:hidden}
+.tri-card .n{font-family:"Noto Serif SC";font-weight:900;font-size:1.05rem;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:.1em}
+.tri-card h3{font-size:1.22rem;font-weight:700;margin:10px 0 8px;line-height:1.4}
+.tri-card h3 em{font-style:normal;color:var(--cyan)}
+.tri-card p{color:var(--ink2);font-size:14.5px}
+.intro-note{margin-top:52px}
+.intro-note p{color:var(--ink2);font-size:15px;max-width:760px}
+.intro-note b{color:var(--ink);font-weight:500}
+
+/* 时间轴 */
+.mainline{padding:100px 0 70px}
+.tl{position:relative}
+.tl-axis{position:absolute;top:4px;bottom:8px;left:22px;width:2px;background:rgba(124,140,248,.10);transform:translateX(-50%)}
+.tl-axis i{position:absolute;top:0;left:0;width:100%;height:0;background:var(--grad);box-shadow:0 0 12px rgba(124,140,248,.55)}
+.tl-item{position:relative;display:grid;grid-template-columns:44px minmax(0,1fr);gap:0;padding-bottom:58px}
+.tl-item:last-child{padding-bottom:8px}
+.tl-m{grid-column:1;display:flex;justify-content:center}
+.tl-dot{position:relative;z-index:2;width:15px;height:15px;margin-top:5px;border-radius:50%;background:var(--bg1);border:2px solid var(--ink3);transition:all .5s ease}
+.tl-item.on .tl-dot{border-color:var(--cyan);background:var(--cyan);box-shadow:0 0 0 6px rgba(82,217,240,.14),0 0 24px rgba(82,217,240,.75)}
+.tl-r{grid-column:2;padding-left:16px;min-width:0}
+.tl-meta{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.tl-era-m{font-family:"Noto Serif SC";font-weight:900;font-size:.95rem;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.tl-time{color:var(--violet);font-size:12px;letter-spacing:.12em}
+.tl-key{display:inline-block;font-size:11.5px;color:var(--ink3);border:1px solid var(--line);border-radius:999px;padding:3px 11px;margin-bottom:10px;letter-spacing:.06em}
+.tl-title{font-size:clamp(1.18rem,3.2vw,1.55rem);font-weight:700;line-height:1.42;margin-bottom:10px}
+.tl-title em{font-style:normal;color:var(--cyan)}
+.tl-body p{color:var(--ink2);font-size:15px;max-width:62ch}
+.tl-body p + p{margin-top:8px}
+
+/* 技术谱系 */
+.tech{padding:90px 0 70px}
+.tech-grid{display:grid;gap:14px;grid-template-columns:1fr}
+.tech-card{position:relative;border:1px solid var(--line);border-radius:16px;background:linear-gradient(180deg,rgba(255,255,255,.03),transparent),var(--bg1);padding:24px 22px;overflow:hidden}
+.tech-year{font-size:11.5px;letter-spacing:.18em;color:var(--cyan);margin-bottom:8px}
+.tech-card h3{font-size:1.08rem;font-weight:700;line-height:1.4;margin-bottom:8px}
+.tech-card p{color:var(--ink2);font-size:13.5px}
+.tech-card b{color:var(--ink);font-weight:500}
+
+/* 模型里程碑表 */
+.milestone{padding:80px 0 60px;background:
+  radial-gradient(900px 500px at 15% 0%,rgba(82,217,240,.05),transparent 60%),
+  radial-gradient(900px 600px at 90% 30%,rgba(167,139,250,.05),transparent 60%);
+}
+.table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.015)}
+table{width:100%;border-collapse:collapse;table-layout:fixed;min-width:640px}
+colgroup col:first-child{width:10%}
+colgroup col:nth-child(2){width:22%}
+colgroup col:nth-child(3){width:14%}
+colgroup col:nth-child(4){width:54%}
+th,td{padding:15px 16px;text-align:left;vertical-align:top}
+thead th{font-size:12px;letter-spacing:.18em;color:var(--ink3);font-weight:500;border-bottom:1px solid var(--line);white-space:nowrap}
+tbody td{font-size:14px;color:var(--ink2);border-bottom:1px solid rgba(124,140,248,.08)}
+tbody tr:last-child td{border-bottom:none}
+tbody td:first-child{font-family:"Noto Serif SC";font-weight:700;color:var(--violet)}
+tbody td b{color:var(--ink);font-weight:600}
+tbody tr:hover{background:rgba(124,140,248,.05)}
+.table-note{margin-top:14px;color:var(--ink3);font-size:12.5px}
+
+/* 三条主线 */
+.lines{padding:96px 0 70px}
+.line-row{display:grid;grid-template-columns:92px minmax(0,1fr);gap:18px;padding:30px 0;border-top:1px solid var(--line);transition:background .3s}
+.line-row:last-child{border-bottom:1px solid var(--line)}
+.line-row:hover{background:rgba(124,140,248,.04)}
+.line-name{font-family:"Noto Serif SC";font-weight:900;font-size:1.35rem;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;line-height:1.3}
+.line-row h3{font-size:1.16rem;font-weight:700;margin-bottom:8px}
+.line-row p{color:var(--ink2);font-size:14.5px;max-width:70ch}
+.line-row p b{color:var(--ink);font-weight:500}
+.line-verdict{margin-top:26px;padding:20px 24px;border-radius:14px;border:1px solid rgba(82,217,240,.22);background:rgba(82,217,240,.05);color:var(--ink2);font-size:14.5px}
+.line-verdict b{color:var(--cyan);font-weight:500}
+
+/* 结尾 */
+.ending{padding:110px 0 60px;text-align:center;position:relative;overflow:hidden}
+.ending::before{content:"";position:absolute;top:40px;left:50%;transform:translateX(-50%);width:560px;height:560px;border-radius:50%;background:radial-gradient(closest-side,rgba(124,140,248,.10),transparent);pointer-events:none}
+.end-label{font-size:12.5px;letter-spacing:.3em;color:var(--ink3);margin-bottom:14px}
+.end-route{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:920px;margin:34px auto 52px}
+.end-route span{font-size:13px;color:var(--ink2);border:1px solid var(--line);border-radius:999px;padding:8px 16px;background:rgba(255,255,255,.02)}
+.end-route i{color:var(--cyan);font-style:normal;font-size:12px;margin:0 2px}
+.final-quote{position:relative;max-width:880px;margin:0 auto;font-family:"Noto Serif SC";font-weight:700;font-size:clamp(1.28rem,3.5vw,1.85rem);line-height:1.75}
+.final-quote b{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.close-line{color:var(--ink3);font-size:14.5px;margin-top:44px}
+.close-line em{font-style:normal;color:var(--ink2)}
+
+/* 参考来源 */
+.refs{padding:40px 0 80px}
+.refs h3{font-size:13px;letter-spacing:.24em;color:var(--ink3);font-weight:500;margin-bottom:16px}
+.refs ul{list-style:none;display:grid;gap:8px}
+.refs li{font-size:12.5px;color:var(--ink3);line-height:1.7}
+.refs a{color:var(--ink2);text-decoration:none;border-bottom:1px solid rgba(167,179,200,.25);word-break:break-all}
+.refs a:hover{color:var(--cyan);border-color:var(--cyan)}
+
+footer{border-top:1px solid rgba(124,140,248,.10);padding:34px 22px 44px;text-align:center;color:var(--ink3);font-size:12.5px;letter-spacing:.1em}
+
+/* 滚动揭示 */
+.rv{opacity:0;transform:translateY(26px);transition:opacity .8s ease,transform .8s ease}
+.rv.on{opacity:1;transform:none}
+body.no-motion .rv{opacity:1;transform:none;transition:none}
+
+/* 桌面 */
+@media(min-width:640px){
+  .tech-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(min-width:768px){
+  .intro{padding:140px 0 60px}
+  .tri{grid-template-columns:repeat(3,1fr);gap:18px}
+  .tl-item{grid-template-columns:minmax(0,1fr) 96px minmax(0,1fr);padding-bottom:72px}
+  .tl-axis{left:50%}
+  .tl-l{grid-column:1;text-align:right;padding-right:36px;padding-top:2px}
+  .tl-era{font-family:"Noto Serif SC";font-weight:900;font-size:1.7rem;line-height:1;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;display:block;margin-bottom:8px}
+  .tl-time{display:block}
+  .tl-m{grid-column:2}
+  .tl-r{grid-column:3;padding-left:36px;min-width:0}
+  .tl-meta{display:none}
+  .tl-body p{font-size:15.5px}
+  .tech{padding:110px 0 90px}
+  .tech-grid{grid-template-columns:repeat(4,1fr);gap:16px}
+  .tech-card{padding:28px 24px}
+  .milestone{padding:110px 0 80px}
+  .lines{padding:120px 0 90px}
+  .line-row{grid-template-columns:130px minmax(0,1fr);gap:26px;padding:36px 12px}
+  .line-name{font-size:1.6rem}
+  .ending{padding:140px 0 80px}
+}
+</style>
+</head>
+<body>
+
+<div class="progress" aria-hidden="true"><i id="prBar"></i></div>
+
+<!-- ===== Hero ===== -->
+<header class="hero" id="top">
+  <canvas id="stars" aria-hidden="true"></canvas>
+  <div class="hero-inner">
+    <p class="eyebrow">THE RISE OF LLM · <b>大模型十年</b></p>
+    <h1>从「词的向量」<br>到<span class="g">会推理的模型</span></h1>
+    <p class="hero-sub">大语言模型（LLM）发展路线图 —— 架构、规模、对齐三条主线交织的技术跃迁史，从 2013 到 2026。</p>
+    <div class="route" aria-hidden="true">
+      <span style="--i:0"><i></i>词向量</span>
+      <span style="--i:1"><i></i>Transformer</span>
+      <span style="--i:2"><i></i>预训练</span>
+      <span style="--i:3"><i></i>规模法则</span>
+      <span style="--i:4"><i></i>对齐</span>
+      <span style="--i:5"><i></i>多模态</span>
+      <span style="--i:6"><i></i>推理</span>
+      <span style="--i:7"><i></i>Agent 基座</span>
+    </div>
+  </div>
+  <a class="scroll-cue" href="#intro">向下滚动，展开这张路线图
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+  </a>
+</header>
+
+<main>
+
+  <!-- ===== 01 摘要 ===== -->
+  <section class="intro" id="intro">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <p class="sec-eyebrow">01 / 摘要</p>
+        <h2>十年 LLM，是三条线共振的结果</h2>
+        <p>大语言模型的进化史，可以浓缩成一句话：更强的架构，乘以更大的规模，再乘以更好的对齐。任何一次质变，都是三者同时到位的结果。</p>
+      </div>
+      <div class="tri">
+        <div class="tri-card rv">
+          <div class="n">LINE 01</div>
+          <h3><em>架构</em>革命</h3>
+          <p>从循环神经网络到自注意力，从稠密到稀疏。每一次架构更替，都重写能力上限。</p>
+        </div>
+        <div class="tri-card rv">
+          <div class="n">LINE 02</div>
+          <h3><em>规模</em>法则</h3>
+          <p>参数、数据、算力同步膨胀。损失随规模幂律下降，「大力出奇迹」被写进论文。</p>
+        </div>
+        <div class="tri-card rv">
+          <div class="n">LINE 03</div>
+          <h3><em>对齐</em>工程</h3>
+          <p>让模型听指挥、说人话、守边界。从预训练到 RLHF，再到推理对齐，能力终于「可用」。</p>
+        </div>
+      </div>
+      <div class="intro-note">
+        <p class="rv">接下来的主线一，按<b>时间轴</b>讲八个阶段的跃迁；主线二，拆开<b>标志性技术</b>与<b>里程碑模型</b>；最后用「三条主线」收束内在逻辑。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 02 主线一 · 阶段演进 ===== -->
+  <section class="mainline" id="line1">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <p class="sec-eyebrow">02 / 主线一 · 阶段演进</p>
+        <h2>八个阶段，八年质变</h2>
+        <p>从「词的向量」到「会推理的模型」，每一步都踩在上一代的肩膀上。</p>
+      </div>
+
+      <div class="tl">
+        <div class="tl-axis" aria-hidden="true"><i id="tlFill"></i></div>
+
+        <div class="tl-item">
+          <div class="tl-l"><span class="tl-era">01</span><span class="tl-time">2013 — 2016</span></div>
+          <div class="tl-m"><span class="tl-dot"></span></div>
+          <div class="tl-r">
+            <div class="tl-meta"><span class="tl-era-m">01</span><span class="tl-time">2013 — 2016</span></div>
+            <span class="tl-key">符号 → 向量</span>
+            <h3 class="tl-title">词向量时代</h3>
+            <div class="tl-body">
+              <p><b>Word2Vec（2013）</b>把词的语义压缩进连续向量，让模型第一次「懂得」词的相似与类比；<b>Seq2Seq（2014）</b>让神经网络学会翻译；<b>注意力机制（2014）</b>让模型学会「看哪里」。</p>
+              <p>这是语言模型从符号规则走向分布式表示的起点——循环神经网络（RNN / LSTM / GRU）是这一阶段的主角。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-l"><span class="tl-era">02</span><span class="tl-time">2017</span></div>
+          <div class="tl-m"><span class="tl-dot"></span></div>
+          <div class="tl-r">
+            <div class="tl-meta"><span class="tl-era-m">02</span><span class="tl-time">2017</span></div>
+            <span class="tl-key">自注意力</span>
+            <h3 class="tl-title">Transformer 革命</h3>
+            <div class="tl-body">
+              <p>Google 发表《Attention Is All You Need》：用自注意力替代循环结构，序列可以<b>并行计算</b>，长程依赖不再是瓶颈。</p>
+              <p>今天所有主流大模型的祖先是同一个架构——Transformer。此后十年，架构本身几乎没有被推翻过。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-l"><span class="tl-era">03</span><span class="tl-time">2018 — 2019</span></div>
+          <div class="tl-m"><span class="tl-dot"></span></div>
+          <div class="tl-r">
+            <div class="tl-meta"><span class="tl-era-m">03</span><span class="tl-time">2018 — 2019</span></div>
+            <span class="tl-key">先自学，再上岗</span>
+            <h3 class="tl-title">预训练时代</h3>
+            <div class="tl-body">
+              <p><b>GPT-1（2018，1.17 亿参数）</b>是第一个基于 Transformer 解码器的生成式预训练模型；<b>BERT（2018，3.4 亿）</b>用双向编码器刷新 11 项 NLP 任务纪录；<b>GPT-2（2019，15 亿）</b>展示了零样本生成。</p>
+              <p>范式确立：「先在海量文本上自学，再按任务微调」。预训练 + 微调成为此后所有大模型的默认路线。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-l"><span class="tl-era">04</span><span class="tl-time">2020 — 2021</span></div>
+          <div class="tl-m"><span class="tl-dot"></span></div>
+          <div class="tl-r">
+            <div class="tl-meta"><span class="tl-era-m">04</span><span class="tl-time">2020 — 2021</span></div>
+            <span class="tl-key">大力出奇迹</span>
+            <h3 class="tl-title">规模法则</h3>
+            <div class="tl-body">
+              <p><b>GPT-3（2020，1750 亿参数）</b>无需微调、仅凭「上下文学习」就能完成任务；<b>Scaling Laws（2020）</b>证明损失随参数、数据、算力幂律下降——「大力出奇迹」有了理论背书。</p>
+              <p><b>Codex（2021）</b>让模型学会写代码；DeepMind 的 Gopher（2800 亿）与 Google 的 PaLM（5400 亿）把规模竞赛推向新高度。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-l"><span class="tl-era">05</span><span class="tl-time">2022</span></div>
+          <div class="tl-m"><span class="tl-dot"></span></div>
+          <div class="tl-r">
+            <div class="tl-meta"><span class="tl-era-m">05</span><span class="tl-time">2022</span></div>
+            <span class="tl-key">说人话，听指挥</span>
+            <h3 class="tl-title">对齐革命</h3>
+            <div class="tl-body">
+              <p><b>InstructGPT / RLHF（2022）</b>用人类反馈训练奖励模型，再优化策略——模型第一次真正「听指挥、说人话」。</p>
+              <p><b>ChatGPT（2022 年 11 月）</b>把对齐后的模型做成产品，两个月月活破亿，AI 进入大众视野。质变点：模型从「会生成」到「可用」。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-l"><span class="tl-era">06</span><span class="tl-time">2023</span></div>
+          <div class="tl-m"><span class="tl-dot"></span></div>
+          <div class="tl-r">
+            <div class="tl-meta"><span class="tl-era-m">06</span><span class="tl-time">2023</span></div>
+            <span class="tl-key">多模态 + 开源</span>
+            <h3 class="tl-title">通用助手与开源潮</h3>
+            <div class="tl-body">
+              <p><b>GPT-4（2023 年 3 月）</b>打通文本与图像，在专业考试中表现惊人；<b>LLaMA（2023）</b>掀起开源风暴，Alpaca 与 LoRA 把微调成本从百万级降到百元级。</p>
+              <p>Gemini、Claude 相继入场；长上下文（100K → 1M token）与 MoE 稀疏架构（Mixtral）成为新战场。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-l"><span class="tl-era">07</span><span class="tl-time">2024</span></div>
+          <div class="tl-m"><span class="tl-dot"></span></div>
+          <div class="tl-r">
+            <div class="tl-meta"><span class="tl-era-m">07</span><span class="tl-time">2024</span></div>
+            <span class="tl-key">慢下来，想清楚</span>
+            <h3 class="tl-title">推理时代开启</h3>
+            <div class="tl-body">
+              <p><b>GPT-4o（2024 年 5 月）</b>实现原生多模态、低延迟语音对话；<b>o1（2024 年 9 月）</b>引入思维链与「推理时扩展」——让模型在回答前先想得更久，正确率随思考长度提升。</p>
+              <p>Scaling 的重心从「训练时」转向「推理时」；DeepSeek-V3（2024 年 12 月）以高效训练震惊业界。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-l"><span class="tl-era">08</span><span class="tl-time">2025 — 2026</span></div>
+          <div class="tl-m"><span class="tl-dot"></span></div>
+          <div class="tl-r">
+            <div class="tl-meta"><span class="tl-era-m">08</span><span class="tl-time">2025 — 2026</span></div>
+            <span class="tl-key">推理平权，走向 Agent</span>
+            <h3 class="tl-title">前沿与 Agent 化</h3>
+            <div class="tl-body">
+              <p><b>DeepSeek-R1（2025 年 1 月）</b>以纯强化学习让模型「自己学会思考」，性能对标 o1 且全量开源——推理能力首次平权；<b>GPT-5（2025 年 8 月）</b>统一快慢思考，不再需要手动切换模式。</p>
+              <p>进入 2026：超长上下文（200 万 token）、多智能体协作、实时多模态成为标配；Gemini 3.1、Claude Opus 5、DeepSeek-V4 持续刷新上限。LLM 从「对话工具」变成 <b>Agent 基座</b>——下一站，是「能办事的系统」。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 03 主线二 · 标志性技术 ===== -->
+  <section class="tech" id="tech">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <p class="sec-eyebrow">03 / 主线二 · 标志性技术</p>
+        <h2>八项改变格局的技术</h2>
+        <p>它们不是并列的补丁，而是一条技术链——每一项都解锁了下一项。</p>
+      </div>
+      <div class="tech-grid">
+        <article class="tech-card rv"><div class="tech-year">2013</div><h3>词嵌入 Word Embedding</h3><p>语义进向量。<b>Word2Vec</b> 让「国王 − 男人 + 女人 ≈ 女王」成为可能，分布式表示取代离散符号。</p></article>
+        <article class="tech-card rv"><div class="tech-year">2014 / 2017</div><h3>注意力机制 Attention</h3><p>学会「看哪里」。从机器翻译的局部对齐，到自注意力的全局建模——注意力是 Transformer 的灵魂。</p></article>
+        <article class="tech-card rv"><div class="tech-year">2017</div><h3>Transformer</h3><p>序列并行。<b>《Attention Is All You Need》</b>让长序列训练成为可能，一个架构统治十年。</p></article>
+        <article class="tech-card rv"><div class="tech-year">2018</div><h3>预训练 + 微调</h3><p>先自学，再上岗。海量文本无监督预训练 + 少量标注微调，让「通用」第一次成为默认属性。</p></article>
+        <article class="tech-card rv"><div class="tech-year">2020</div><h3>规模法则 Scaling Laws</h3><p>大力出奇迹的数学形式。损失随参数、数据、算力幂律下降——算力因此成为战略资源。</p></article>
+        <article class="tech-card rv"><div class="tech-year">2022</div><h3>RLHF 人类反馈对齐</h3><p>让模型听指挥。人类偏好训练奖励模型，再用强化学习优化策略——「可用性」由此而来。</p></article>
+        <article class="tech-card rv"><div class="tech-year">2023 — 2024</div><h3>MoE 混合专家</h3><p>稀疏高效。每次只激活一部分参数（Mixtral、DeepSeek-V3），用更少算力撑起更大模型。</p></article>
+        <article class="tech-card rv"><div class="tech-year">2024</div><h3>思维链 / 推理时扩展</h3><p>慢下来想清楚。o1 开启 test-time scaling：答案的正确率，第一次与「思考长度」正相关。</p></article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 04 模型里程碑 ===== -->
+  <section class="milestone" id="milestone">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <p class="sec-eyebrow">04 / 模型里程碑</p>
+        <h2>十年间，那些改写规则的模型</h2>
+        <p>选入标准：要么定义了新范式，要么把能力推到新量级。</p>
+      </div>
+      <div class="table-scroll rv">
+        <table>
+          <colgroup><col><col><col><col></colgroup>
+          <thead>
+            <tr><th>年份</th><th>模型</th><th>参数规模</th><th>意义</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>2017</td><td><b>Transformer</b>（Google）</td><td>6.5 亿</td><td>自注意力架构，所有现代大模型的始祖</td></tr>
+            <tr><td>2018</td><td><b>GPT-1</b>（OpenAI）</td><td>1.17 亿</td><td>首个生成式预训练 Transformer，大模型雏形</td></tr>
+            <tr><td>2018</td><td><b>BERT</b>（Google）</td><td>3.4 亿</td><td>双向编码器刷新 11 项 NLP 纪录，理解类任务标杆</td></tr>
+            <tr><td>2019</td><td><b>GPT-2</b>（OpenAI）</td><td>15 亿</td><td>零样本生成惊艳业界，一度因风险延迟发布</td></tr>
+            <tr><td>2020</td><td><b>GPT-3</b>（OpenAI）</td><td>1750 亿</td><td>上下文学习涌现，规模法则实证</td></tr>
+            <tr><td>2021</td><td><b>Codex</b>（OpenAI）</td><td>120 亿</td><td>代码生成落地（GitHub Copilot），AI 进入 IDE</td></tr>
+            <tr><td>2022</td><td><b>ChatGPT</b>（OpenAI）</td><td>—</td><td>RLHF 产品化，两个月月活破亿，AI 大众化元年</td></tr>
+            <tr><td>2023</td><td><b>GPT-4</b>（OpenAI）</td><td>未公开</td><td>多模态，专业考试超过多数人类考生</td></tr>
+            <tr><td>2023</td><td><b>LLaMA</b>（Meta）</td><td>70 亿级</td><td>开源平权起点，催生全球微调生态</td></tr>
+            <tr><td>2024</td><td><b>GPT-4o</b>（OpenAI）</td><td>未公开</td><td>原生多模态、低延迟语音，实时交互成为可能</td></tr>
+            <tr><td>2024</td><td><b>o1</b>（OpenAI）</td><td>未公开</td><td>思维链 + 推理时扩展，推理模型品类诞生</td></tr>
+            <tr><td>2025</td><td><b>DeepSeek-R1</b>（深度求索）</td><td>开源</td><td>纯强化学习习得推理，性能对标 o1，MIT 全量开源</td></tr>
+            <tr><td>2025</td><td><b>GPT-5</b>（OpenAI）</td><td>未公开</td><td>统一快慢思考，不再需要手动切换推理模式</td></tr>
+            <tr><td>2026</td><td><b>Gemini 3.1 / Claude Opus 5 / DeepSeek-V4</b></td><td>未公开</td><td>超长上下文、深度推理、Agent 能力与多元算力生态</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="table-note rv">注：未公开参数规模的模型以「未公开」标注；2026 行为当前前沿，能力仍在快速迭代。</p>
+    </div>
+  </section>
+
+  <!-- ===== 05 三条主线 · 内在逻辑 ===== -->
+  <section class="lines" id="lines">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <p class="sec-eyebrow">05 / 三条主线 · 内在逻辑</p>
+        <h2>把十年读成三句话</h2>
+      </div>
+      <div class="line-row rv">
+        <div class="line-name">架构线</div>
+        <div>
+          <h3>从循环到自注意力，再到稀疏与混合</h3>
+          <p><b>RNN → LSTM/GRU → Transformer → MoE 稀疏 → 多模态与推理架构。</b>架构决定能力上限：它定义了模型能「看到」多远、能「并行」多快、能「思考」多深。</p>
+        </div>
+      </div>
+      <div class="line-row rv">
+        <div class="line-name">规模线</div>
+        <div>
+          <h3>参数、数据、算力，三条曲线同步膨胀</h3>
+          <p><b>1 亿 → 15 亿 → 1750 亿 → 万亿级。</b>Scaling Laws 让「堆规模」从工程直觉变成科学方法；2024 年后，重心又从训练时规模转向<b>推理时规模</b>——思考长度成为新的「参数」。</p>
+        </div>
+      </div>
+      <div class="line-row rv">
+        <div class="line-name">对齐线</div>
+        <div>
+          <h3>从「会生成」到「可用」，再到「可托付」</h3>
+          <p><b>预训练 → 监督微调 → RLHF → 推理对齐 → 可监督的自主行为。</b>对齐工程决定能力的「可用性」：模型越强，越需要说人话、守边界、能纠错——这也是通往 Agent 的必经之路。</p>
+        </div>
+      </div>
+      <div class="line-verdict rv"><b>核心判断：</b>每一次质变，都是「架构 × 规模 × 对齐」三者共振的结果。单点突破只是进步，三者同时到位才是跃迁——GPT-3 证明了规模，ChatGPT 证明了对齐，o1 与 R1 则证明了两者之上的推理。</div>
+    </div>
+  </section>
+
+  <!-- ===== 06 结语 ===== -->
+  <section class="ending" id="end">
+    <div class="wrap">
+      <div class="end-label">NEXT STOP · 下一站</div>
+      <div class="end-route">
+        <span>词向量</span><i>→</i>
+        <span>Transformer</span><i>→</i>
+        <span>预训练</span><i>→</i>
+        <span>规模法则</span><i>→</i>
+        <span>对齐</span><i>→</i>
+        <span>多模态</span><i>→</i>
+        <span>推理</span><i>→</i>
+        <span>Agent 基座</span>
+      </div>
+      <p class="final-quote rv">大模型的十年，是把「词的向量」训练成<b>「世界的模型」</b>的十年。<br>从理解语言，到理解世界；从回答问题，到<b>替你把事情办完</b>。</p>
+      <p class="close-line">下一个十年，主角不再是模型本身，而是<em>模型之上的系统</em>。</p>
+    </div>
+  </section>
+
+  <!-- ===== 参考来源 ===== -->
+  <section class="refs">
+    <div class="wrap">
+      <h3>参考来源</h3>
+      <ul>
+        <li>华为开发者联盟：《大模型概论与发展历程》 — <a href="https://developer.huawei.com/consumer/cn/blog/topic/03212963312149432">developer.huawei.com</a></li>
+        <li>OpenAI 官方：《模型发布说明》 — <a href="https://help.openai.com/zh-hans-cn/articles/9624314-model-release-notes">help.openai.com</a></li>
+        <li>DeepSeek 官方：《DeepSeek-R1 Release》 — <a href="https://www.deepseek.com/en/news/deepseek-r1/">deepseek.com</a></li>
+        <li>智源社区：《语言模型 · 发展历程》 — <a href="https://hub.baai.ac.cn/knowledge-tree/2240a92c-e03a-49aa-a46b-7d426e0e6273">hub.baai.ac.cn</a></li>
+        <li>新华网：《DeepSeek 火爆一年间》 — <a href="https://www.news.cn/digital/20251211/80f702c6c7934ba58497c508d46aeb1c/c.html">news.cn</a></li>
+        <li>arXiv：《DeepSeek: Paradigm Shifts and Technical Evolution in Large AI Models》 — <a href="https://arxiv.org/html/2507.09955v1/">arxiv.org</a></li>
+        <li>DataCamp：《The History and Evolution of Large Language Models》 — <a href="https://www.datacamp.com/de/blog/history-and-evolution-of-large-language-models">datacamp.com</a></li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<footer>大语言模型发展路线图 · 时间线与数据来自公开资料 · 检索日期 2026-10</footer>
+
+<script>
+(function(){
+  var prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (prefersReduced) document.body.classList.add('no-motion');
+
+  /* 星图 Canvas */
+  var cv = document.getElementById('stars');
+  var ctx = cv.getContext('2d');
+  var W=0,H=0,pts=[],rafId=null,heroVisible=true;
+
+  function resize(){
+    W = cv.width = cv.offsetWidth;
+    H = cv.height = cv.offsetHeight;
+    var n = Math.max(40, Math.min(130, Math.floor(W*H/15000)));
+    pts = [];
+    for(var i=0;i<n;i++){
+      pts.push({
+        x: Math.random()*W, y: Math.random()*H,
+        vx: (Math.random()-.5)*.22, vy: (Math.random()-.5)*.22,
+        r: Math.random()*1.5+.4
+      });
+    }
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    var i,j;
+    for(i=0;i<pts.length;i++){
+      var p=pts[i];
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.x<0) p.x=W; if(p.x>W) p.x=0;
+      if(p.y<0) p.y=H; if(p.y>H) p.y=0;
+    }
+    for(i=0;i<pts.length;i++){
+      for(j=i+1;j<pts.length;j++){
+        var dx=pts[i].x-pts[j].x, dy=pts[i].y-pts[j].y;
+        var d=Math.sqrt(dx*dx+dy*dy);
+        if(d<120){
+          ctx.strokeStyle='rgba(124,140,248,'+((1-d/120)*.20).toFixed(3)+')';
+          ctx.lineWidth=1;
+          ctx.beginPath(); ctx.moveTo(pts[i].x,pts[i].y); ctx.lineTo(pts[j].x,pts[j].y); ctx.stroke();
+        }
+      }
+    }
+    for(i=0;i<pts.length;i++){
+      var p=pts[i];
+      ctx.fillStyle='rgba(233,238,247,'+(0.25+p.r*0.22).toFixed(3)+')';
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,6.2832); ctx.fill();
+    }
+  }
+
+  function loop(){ draw(); rafId = requestAnimationFrame(loop); }
+
+  resize();
+  if(prefersReduced){ draw(); } else { loop(); }
+
+  window.addEventListener('resize', function(){ resize(); if(prefersReduced) draw(); });
+
+  if('IntersectionObserver' in window){
+    var heroObs = new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        heroVisible = e.isIntersecting;
+        if(prefersReduced) return;
+        if(heroVisible && !rafId){ loop(); }
+        if(!heroVisible && rafId){ cancelAnimationFrame(rafId); rafId=null; }
+      });
+    }, {threshold: 0.02});
+    heroObs.observe(document.querySelector('.hero'));
+  }
+
+  /* 滚动：进度条 + 时间轴填充 */
+  var prBar = document.getElementById('prBar');
+  var tlFill = document.getElementById('tlFill');
+  var tlSec = document.getElementById('line1');
+  var ticking = false;
+
+  function onScroll(){
+    ticking = false;
+    var doc = document.documentElement;
+    var max = doc.scrollHeight - window.innerHeight;
+    var p = max>0 ? (window.scrollY/max) : 0;
+    prBar.style.width = (p*100).toFixed(2)+'%';
+
+    var r = tlSec.getBoundingClientRect();
+    var total = r.height - window.innerHeight*0.25;
+    var cur = Math.min(Math.max(-r.top + window.innerHeight*0.12, 0), total);
+    tlFill.style.height = (total>0 ? (cur/total*100).toFixed(2) : 0)+'%';
+  }
+
+  function requestTick(){
+    if(!ticking){ ticking=true; requestAnimationFrame(onScroll); }
+  }
+
+  window.addEventListener('scroll', requestTick, {passive:true});
+  window.addEventListener('resize', requestTick);
+  onScroll();
+
+  /* 滚动揭示 */
+  var rvs = document.querySelectorAll('.rv');
+  if('IntersectionObserver' in window && !prefersReduced){
+    var io = new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if(e.isIntersecting){ e.target.classList.add('on'); io.unobserve(e.target); }
+      });
+    }, {threshold: 0.12, rootMargin:'0px 0px -6% 0px'});
+    rvs.forEach(function(el){ io.observe(el); });
+  } else {
+    rvs.forEach(function(el){ el.classList.add('on'); });
+  }
+
+  /* 时间轴节点点亮 */
+  var items = document.querySelectorAll('.tl-item');
+  if('IntersectionObserver' in window){
+    var io2 = new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if(e.isIntersecting){ e.target.classList.add('on'); }
+        else { e.target.classList.remove('on'); }
+      });
+    }, {threshold: 0.45});
+    items.forEach(function(el){ io2.observe(el); });
+  } else {
+    items.forEach(function(el){ el.classList.add('on'); });
+  }
+})();
+</script>
+</body>
+</html>
